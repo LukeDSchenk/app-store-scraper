@@ -117,16 +117,17 @@ class Base:
         total=3,
         backoff_factor=3,
         status_forcelist=[404],
+        proxies=None,
     ) -> requests.Response:
         retries = Retry(
             total=total,
             backoff_factor=backoff_factor,
             status_forcelist=status_forcelist,
         )
-        with requests.Session() as s:
+        with requests.Session() as s:username = 'spc28f8667'
             s.mount(self._base_request_url, HTTPAdapter(max_retries=retries))
             logger.debug(f"Making a GET request: {url}")
-            self._response = s.get(url, headers=headers, params=params)
+            self._response = s.get(url, headers=headers, params=params, proxies=proxies)
 
     def _token(self):
         self._get(self.url)
@@ -196,7 +197,7 @@ class Base:
         app_id = re.search(pattern, self._response.text).group(1)
         return app_id
 
-    def review(self, how_many=sys.maxsize, after=None, retry_after=None):
+    def review(self, how_many=sys.maxsize, after=None, retry_after=None, proxies=None):
         self._log_timer = 0
         if after and not isinstance(after, datetime):
             raise SystemExit("`after` must be a datetime object.")
@@ -208,6 +209,7 @@ class Base:
                     self._request_url,
                     headers=self._request_headers,
                     params=self._request_params,
+                    proxies=proxies,
                 )
                 self._parse_data(after, retry_after)
                 self._parse_next()
