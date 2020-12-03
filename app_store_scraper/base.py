@@ -124,7 +124,7 @@ class Base:
             backoff_factor=backoff_factor,
             status_forcelist=status_forcelist,
         )
-        with requests.Session() as s:username = 'spc28f8667'
+        with requests.Session() as s:
             s.mount(self._base_request_url, HTTPAdapter(max_retries=retries))
             logger.debug(f"Making a GET request: {url}")
             self._response = s.get(url, headers=headers, params=params, proxies=proxies)
